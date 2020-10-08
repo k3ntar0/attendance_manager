@@ -1,12 +1,13 @@
 {
     "version": 2,
-    "routes": [{
+    "routes": [
+        {
             "src": "/",
-            "dest": "api/server.js"
+            "dest": "index.js"
         },
         {
             "src": "/webhook",
-            "dest": "api/server.js"
+            "dest": "index.js"
         }
     ]
 }
