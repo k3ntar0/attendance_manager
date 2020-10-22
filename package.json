@@ -4,22 +4,24 @@
     "description": "Employees attendance manager",
     "main": "dist/index.js",
     "scripts": {
-        "build": "webpack --mode production",
+        "build": "tsc",
         "clean": "rimraf dist/*",
         "dev": "ts-node src/index.ts",
         "dev:watch": "ts-node-dev --respawn src/index.ts",
-        "deploy": "vercel deploy --prod",
+        "deploy": "run-s clean build vercel:deploy",
         "lint": "eslint src/index.ts",
         "lint:fix": "eslint --fix src/index.ts",
-        "tsc": "tsc",
         "test": "echo \"Error: no test specified\" && exit 1",
         "vercel": "run-s build vercel:dev",
-        "vercel:deploy": "vercel deploy prod",
+        "vercel:deploy": "vercel deploy --prod",
         "vercel:dev": "vercel dev"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/k3ntar0/attendance_manager.git"
+    },
+    "engines": {
+        "node": "12.18.3"
     },
     "author": "k3ntar0",
     "license": "ISC",
