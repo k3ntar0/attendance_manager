@@ -1,7 +1,8 @@
 import * as Express from 'express'
-const app = Express()
+require('dotenv').config()
 
-const PORT = process.env.PORT || 3000
+const app = Express()
+const PORT = process.env.PORT
 
 app.get('/', (_req, res) => {
     res.send(`
