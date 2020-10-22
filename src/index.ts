@@ -1,14 +1,14 @@
-import * as Express from 'express';
-const app = Express();
+import * as Express from 'express'
+const app = Express()
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000
 
-app.get("/", (_req, res) => {
-  res.send(`
-    <h1>TypeScript Express</h1>
-`);
-});
+app.get('/', (_req, res) => {
+    res.send(`
+        <h1>TypeScript Express</h1>
+    `)
+})
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}...`);
-});
+    console.log(`Server listening on port ${PORT}...`)
+})

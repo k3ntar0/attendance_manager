@@ -1,16 +1,13 @@
 {
-  "compilerOptions": {
-    "target": "ES2019",
-    "baseUrl": "./",
-    "paths": {
-      "src/*": ["src/*"]
+    "compilerOptions": {
+        "target": "es2019",
+        "lib": ["es2020"],
+        "baseUrl": "./",
+        "paths": {
+            "src/*": ["src/*"]
+        },
+        "outDir": "./dist/api"
     },
-    "outDir": "./dist/api",
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modues"
-  ]
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modues"]
 }
