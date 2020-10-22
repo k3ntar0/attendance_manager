@@ -9,7 +9,7 @@ module.exports = {
 
     // ファイルの出力設定
     output: {
-        path: `${__dirname}/dist/api/`,
+        path: `${__dirname}/dist`,
         filename: 'index.js',
         libraryTarget: 'this',
     },
