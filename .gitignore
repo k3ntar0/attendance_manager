@@ -8,6 +8,10 @@
 .history
 .svn/
 
+# Project
+.vercel
+index.js
+
 # Logs
 logs
 *.log
