@@ -11,6 +11,7 @@
 # Project
 .vercel
 index.js
+*credentials.json
 
 # Logs
 logs

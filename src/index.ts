@@ -1,42 +1,41 @@
-const line = require('@line/bot-sdk')
-const Express = require('express')
 require('dotenv').config()
+const { GoogleSpreadsheet } = require('google-spreadsheet')
 
-const config = {
-    channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-    channelSecret: process.env.CHANNEL_SECRET,
-}
+// Googleスプレッドシートからシフト情報をロードし、担当者の電話番号を取得
+async function loadShiftPhoneNumbers() {
+    // スプレッドシートIDと資格情報を用いてGoogleスプレッドシートをロード
+    const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID)
+    const credentials = require('./google-credentials.json')
+    await doc.useServiceAccountAuth(credentials)
+    await doc.loadInfo()
 
-const client = new line.Client(config)
-const app = Express()
-const PORT = process.env.PORT
+    //シフト情報を取得
+    const shiftSheet = await doc.sheetsById[process.env.SHIFT_WORKSHEET_ID]
+    const shiftRows = await shiftSheet.getRows()
 
-app.get('/', (_req, res) => {
-    res.send(`
-        <h1>TypeScript Express</h1>
-    `)
-})
+    // 従業員情報を取得
+    const staffSheet = await doc.sheetsById[process.env.STAFF_WORKSHEET_ID]
+    const staffRows = await staffSheet.getRows()
 
-app.post('/webhook', line.middleware(config), (req, res) => {
-    Promise.all(req.body.events.map(handleEvent)).then((result) =>
-        res.json(result),
+    // シフト情報からDate列の値と指定した日付をロケール情報に基づいて取得
+    let shiftRow = shiftRows.find(
+        (row) =>
+            new Date(row.Date).toLocaleDateString() ===
+            new Date('2020/5/15').toLocaleDateString(),
     )
-})
 
-// event handler
-function handleEvent(event) {
-    if (event.type !== 'message' || event.message.type !== 'text') {
-        // ignore non-text-message event
-        return Promise.resolve(null)
-    }
+    // 元データ[ '5/15/2020', 'Mitsuharu', 'Yoshihiro' ]
+    // Date列(最初の列)を取り除き、シフト担当の従業員を含む配列を取得する
+    let employeesOnDuty = shiftRow._rawData.slice(1) // [ 'Mitsuharu', 'Yoshihiro' ]
+    // 名前から電話番号の配列に置換
+    employeesOnDuty = employeesOnDuty.map(
+        (m) => staffRows.find((row) => row.Name === m).PhoneNumber,
+    ) // [ '+815012341235', '+815012341237' ]
 
-    // create a echoing text message
-    const echo = { type: 'text', text: event.message.text }
-
-    // use reply API
-    return client.replyMessage(event.replyToken, echo)
+    return employeesOnDuty.join(',')
 }
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`)
-})
+// 実装した関数が正しく動作するかテスト
+loadShiftPhoneNumbers()
+    .then((numbers) => console.log(numbers))
+    .catch((error) => console.error(error))
