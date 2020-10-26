@@ -1,5 +1,37 @@
 require('dotenv').config()
+import express from 'express'
 const { GoogleSpreadsheet } = require('google-spreadsheet')
+
+const app: express.Express = express()
+
+// CORSの許可
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept',
+    )
+    next()
+})
+
+// body-parserに基づいた着信リクエストの解析
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+// Routingk
+const router: express.Router = express.Router()
+
+router.get('/read', (req: express.Request, res: express.Response) => {
+    loadShiftPhoneNumbers()
+        .then((numbers) => res.send(numbers))
+        .catch((error) => res.send(error))
+})
+
+app.use(router)
+
+app.listen(3000, () => {
+    console.log('Example app listening on port 3000!')
+})
 
 // Googleスプレッドシートからシフト情報をロードし、担当者の電話番号を取得
 async function loadShiftPhoneNumbers() {
@@ -35,7 +67,8 @@ async function loadShiftPhoneNumbers() {
     return employeesOnDuty.join(',')
 }
 
-// 実装した関数が正しく動作するかテスト
-loadShiftPhoneNumbers()
-    .then((numbers) => console.log(numbers))
-    .catch((error) => console.error(error))
+// // 実装した関数が正しく動作するかテスト
+
+// router.post('/post', (req: express.Request, res: express.Response) => {
+//     res.send(req.body)
+// })
